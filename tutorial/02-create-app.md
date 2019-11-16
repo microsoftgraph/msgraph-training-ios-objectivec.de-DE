@@ -16,7 +16,6 @@ Erstellen Sie zunächst ein neues SWIFT-Projekt.
 Installieren Sie vor dem Verschieben einige zusätzliche Abhängigkeiten, die Sie später verwenden werden.
 
 - [Microsoft Authentication Library (MSAL) für IOS](https://github.com/AzureAD/microsoft-authentication-library-for-objc) zur Authentifizierung mit Azure AD.
-- [MSAL-Authentifizierungsanbieter für Objective C](https://github.com/microsoftgraph/msgraph-sdk-objc-auth) zum Verbinden von MSAL mit dem Microsoft Graph-SDK.
 - [Microsoft Graph-SDK für Objective C](https://github.com/microsoftgraph/msgraph-sdk-objc) zum tätigen von Anrufen an Microsoft Graph.
 - [Microsoft Graph-Modell SDK für Objective C](https://github.com/microsoftgraph/msgraph-sdk-objc-models) für stark typisierte Objekte, die Microsoft Graph-Ressourcen wie Benutzer oder Ereignisse darstellen.
 
@@ -31,10 +30,9 @@ Installieren Sie vor dem Verschieben einige zusätzliche Abhängigkeiten, die Si
 1. Öffnen Sie die Podfile, und fügen Sie die folgenden Zeilen `use_frameworks!` unmittelbar nach der Zeile hinzu.
 
     ```Ruby
-    pod 'MSAL', '~> 0.3.0'
-    pod 'MSGraphMSALAuthProvider', '~> 0.1.1'
-    pod 'MSGraphClientSDK', ' ~> 0.1.3'
-    pod 'MSGraphClientModels', '~> 0.1.1'
+    pod 'MSAL', '~> 1.0.2'
+    pod 'MSGraphClientSDK', ' ~> 1.0.0'
+    pod 'MSGraphClientModels', '~> 1.3.0'
     ```
 
 1. Speichern Sie die Podfile, und führen Sie dann den folgenden Befehl aus, um die Abhängigkeiten zu installieren.
@@ -114,13 +112,13 @@ In diesem Abschnitt werden die Ansichten für die App erstellt: eine Anmeldeseit
 
     ![Ein Screenshot des Ziehens einer manuellen segue auf den neuen Registerkartenleisten-Controller in Xcode](./images/add-segue.png)
 
-1. Wählen Sie das soeben hinzugefügte segue aus, und wählen Sie dann den **Attributes Inspector**aus. Legen Sie **** das Feldbezeichner `userSignedIn`auf fest.
+1. Wählen Sie das soeben hinzugefügte segue aus, und wählen Sie dann den **Attributes Inspector**aus. Legen Sie **** das Feldbezeichner `userSignedIn`auf fest, und legen Sie die **Präsentation** auf **Vollbildmodus**fest.
 
     ![Screenshot des Felds "Bezeichner" im Attributes inspector in Xcode](./images/set-segue-identifier.png)
 
 1. Wählen Sie die **Szene Element 1**aus, und wählen Sie dann den **Verbindungs Inspektor**aus.
 1. Ziehen Sie unter **ausgelöste Segues**den ungefüllten Kreis neben **manuell** auf den **Anmelde Ansichts Controller** auf dem Storyboard. Wählen Sie im Popup Menü **Modal** aus.
-1. Wählen Sie das soeben hinzugefügte segue aus, und wählen Sie dann den **Attributes Inspector**aus. Legen Sie **** das Feldbezeichner `userSignedOut`auf fest.
+1. Wählen Sie das soeben hinzugefügte segue aus, und wählen Sie dann den **Attributes Inspector**aus. Legen Sie **** das Feldbezeichner `userSignedOut`auf fest, und legen Sie die **Präsentation** auf **Vollbildmodus**fest.
 
 ### <a name="create-welcome-page"></a>Willkommensseite erstellen
 
