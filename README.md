@@ -8,11 +8,11 @@ In dieser Übungseinheit erstellen Sie eine in Objective-C geschriebene IOS-Anwe
 
 - [IOS Objective-C Microsoft Graph Tutorial](https://docs.microsoft.com/graph/tutorials/ios-objectivec)
 
-## <a name="demos"></a>Demos
+## <a name="completed-sample"></a>Abgeschlossenes Beispiel
 
-- [01-Create-App](demos/01-create-app): abgeschlossen [Erstellen einer IOS-Ziel-C-App](https://docs.microsoft.com/graph/tutorials/ios-objectivec?tutorial-step=1)
-- [02-Add-Aad-auth](demos/02-add-aad-auth): abgeschlossene [Add Azure AD-Authentifizierung](https://docs.microsoft.com/graph/tutorials/ios-objectivec?tutorial-step=3)
-- [03-Add-MSGraph](demos/03-add-msgraph): abgeschlossene [Abrufen von Kalenderdaten](https://docs.microsoft.com/graph/tutorials/ios-objectivec?tutorial-step=4)
+Wenn Sie das fertige Beispiel nur generieren möchten, indem Sie dieser Übungseinheit folgen, können Sie es hier finden.
+
+- [Fertig gestelltes Projekt](demo)
 
 ## <a name="watch-the-module"></a>Modul ansehen
 
@@ -29,10 +29,11 @@ Dieses Modul wurde aufgezeichnet und steht im Office-Entwicklungs Kanal YouTube 
 
 | Version |        Datum        |                                                               Kommentare                                                               |
 | ------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
+| 1.9     | 7. April 2020      | Aktualisiertes Lernprogramm mit neuestem Xcode, MSAL usw.                                                                                     |
 | 1,8     | 23. August 2019    | Überarbeitete Schulung für Onboarding zu docs.Microsoft.com                                                                                |
 | 1.7     | 18. Juni 2019      | Readme in aktualisierte Screencast-Aufzeichnung aktualisiert                                                                                     |
 | 1.6     | 12. Mai 2019       | 2019Q4-Inhaltsaktualisierung                                                                                                               |
-| 1.5     | 12. Februar 2019  | 2019Q3-Inhaltsaktualisierung                                                                                                               |
+| 1,5     | 12. Februar 2019  | 2019Q3-Inhaltsaktualisierung                                                                                                               |
 | 1.4     | 7. November 2018   | 2019Q2-Inhaltsaktualisierung; Prozess zur Verwendung von Cocoapods anstelle von Karthago für das Einschließen von MSAL IOS SDK ersetzt; aktualisierte Übungseinheit für Xcode 10,1 |
 | 1.3     | 7. September 2018  | 2019Q1-Inhaltsaktualisierung                                                                                                               |
 | 1.2     | 28. Juni 2018      | Screencast hinzugefügt.                                                                                                                    |

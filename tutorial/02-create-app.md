@@ -30,7 +30,7 @@ Installieren Sie vor dem Verschieben einige zusätzliche Abhängigkeiten, die Si
 1. Öffnen Sie die Podfile, und fügen Sie die folgenden Zeilen `use_frameworks!` unmittelbar nach der Zeile hinzu.
 
     ```Ruby
-    pod 'MSAL', '~> 1.0.2'
+    pod 'MSAL', '~> 1.1.1'
     pod 'MSGraphClientSDK', ' ~> 1.0.0'
     pod 'MSGraphClientModels', '~> 1.3.0'
     ```
@@ -43,7 +43,7 @@ Installieren Sie vor dem Verschieben einige zusätzliche Abhängigkeiten, die Si
 
 1. Nachdem der Befehl abgeschlossen ist, öffnen Sie das neu erstellte **GraphTutorial. xcworkspace.** in Xcode.
 
-## <a name="design-the-app"></a>Entwerfen der APP
+## <a name="design-the-app"></a>Entwerfen der App
 
 In diesem Abschnitt werden die Ansichten für die App erstellt: eine Anmeldeseite, ein Registerkartenleisten-Navigator, eine Willkommensseite und eine Kalender Seite. Außerdem erstellen Sie ein Aktivitäts Indikator-Overlay.
 
@@ -97,12 +97,14 @@ In diesem Abschnitt werden die Ansichten für die App erstellt: eine Anmeldeseit
 
     ![Screenshot des titelfelds im Attributes inspector in Xcode](./images/set-button-title.png)
 
+1. Klicken Sie auf die Schaltfläche ausgewählt, und wählen Sie am unteren Rand des Storyboards die Schaltfläche **Ausrichten** aus. Wählen Sie sowohl **horizontal im Container** als auch **vertikal im Container** Constraints, lassen Sie Ihre Werte als 0, und wählen Sie dann **2 Abhängigkeiten hinzufügen**aus.
+
+    ![Ein Screenshot der Einstellungen für die Ausrichtungs Einschränkungen in Xcode](./images/add-alignment-constraints.png)
+
 1. Wählen Sie den **Controller anmelden**aus, und wählen Sie dann den **Verbindungs Inspektor**aus.
 1. Ziehen Sie unter **empfangene Aktionen**den ungefüllten Kreis neben **SignIn** auf die Schaltfläche. Wählen Sie im Popup Menü die Option nach **oben innen berühren** aus.
 
     ![Ein Screenshot des Ziehens der SignIn-Aktion auf die Schaltfläche in Xcode](./images/connect-sign-in-button.png)
-
-1. Wählen Sie im Menü **Editor** die Option **Probleme beim automatischen Layout auflösen**aus, und wählen Sie dann **unter alle Ansichten im Steuersatz-Ansichts Controller** **fehlende Abhängigkeiten hinzufügen** aus.
 
 ### <a name="create-tab-bar"></a>Registerkartenleiste erstellen
 
@@ -112,13 +114,13 @@ In diesem Abschnitt werden die Ansichten für die App erstellt: eine Anmeldeseit
 
     ![Ein Screenshot des Ziehens einer manuellen segue auf den neuen Registerkartenleisten-Controller in Xcode](./images/add-segue.png)
 
-1. Wählen Sie das soeben hinzugefügte segue aus, und wählen Sie dann den **Attributes Inspector**aus. Legen Sie **** das Feldbezeichner `userSignedIn`auf fest, und legen Sie die **Präsentation** auf **Vollbildmodus**fest.
+1. Wählen Sie das soeben hinzugefügte segue aus, und wählen Sie dann den **Attributes Inspector**aus. Legen Sie **Identifier** das Feldbezeichner `userSignedIn`auf fest, und legen Sie die **Präsentation** auf **Vollbildmodus**fest.
 
     ![Screenshot des Felds "Bezeichner" im Attributes inspector in Xcode](./images/set-segue-identifier.png)
 
 1. Wählen Sie die **Szene Element 1**aus, und wählen Sie dann den **Verbindungs Inspektor**aus.
 1. Ziehen Sie unter **ausgelöste Segues**den ungefüllten Kreis neben **manuell** auf den **Anmelde Ansichts Controller** auf dem Storyboard. Wählen Sie im Popup Menü **Modal** aus.
-1. Wählen Sie das soeben hinzugefügte segue aus, und wählen Sie dann den **Attributes Inspector**aus. Legen Sie **** das Feldbezeichner `userSignedOut`auf fest, und legen Sie die **Präsentation** auf **Vollbildmodus**fest.
+1. Wählen Sie das soeben hinzugefügte segue aus, und wählen Sie dann den **Attributes Inspector**aus. Legen Sie **Identifier** das Feldbezeichner `userSignedOut`auf fest, und legen Sie die **Präsentation** auf **Vollbildmodus**fest.
 
 ### <a name="create-welcome-page"></a>Willkommensseite erstellen
 
@@ -175,12 +177,6 @@ In diesem Abschnitt werden die Ansichten für die App erstellt: eine Anmeldeseit
     - Zwei **Beschriftungen**
     - Eine **Schaltfläche**
 
-1. Wählen Sie die Ansicht Bild aus, und wählen Sie dann den **Größen Inspektor**aus.
-1. Legen Sie die **Breite** und **Höhe** auf 196 fest.
-1. Wählen Sie die zweite Bezeichnung aus, und wählen Sie dann den **Attribut Inspektor**aus.
-1. Ändern Sie die **Farbe** in **dunkelgrau**und ändern Sie die **Schriftart** in **System 12,0**.
-1. Wählen Sie die Schaltfläche aus, und wählen Sie dann den **Attribut Inspektor**aus.
-1. Ändern Sie **** den Titel `Sign Out`in.
 1. Stellen Sie über den **Connections Inspector**folgende Verbindungen her.
 
     - Verknüpfen Sie die **User** -Steckdose mit dem ersten Etikett.
@@ -188,7 +184,40 @@ In diesem Abschnitt werden die Ansichten für die App erstellt: eine Anmeldeseit
     - Verknüpfen Sie die **userProfilePhoto** -Steckdose mit der Bildansicht.
     - Verknüpfen Sie die Aktion " **abgemeldete** empfangen" mit dem Touch der Schaltfläche nach **innen**.
 
-1. Wählen Sie das Element der Registerkartenleiste am unteren Rand der Szene aus, und wählen Sie dann den **Attributes Inspector**aus. Ändern Sie **** den Titel `Me`in.
+1. Wählen Sie die Ansicht Bild aus, und wählen Sie dann den **Größen Inspektor**aus.
+1. Legen Sie die **Breite** und **Höhe** auf 196 fest.
+1. Verwenden Sie die Schaltfläche **Ausrichten** , um die Constraint **horizontal in Container** mit dem Wert 0 hinzuzufügen.
+1. Verwenden Sie die Schaltfläche **neue Einschränkungen hinzufügen** (neben der Schaltfläche **Ausrichten** ), um die folgenden Einschränkungen hinzuzufügen:
+
+    - Oben ausrichten an: sicherer Bereich, Wert: 0
+    - Untere Fläche für: Benutzeranzeige Name, Wert: Standard
+    - Höhe, Wert: 196
+    - Breite, Wert: 196
+
+    ![Ein Screenshot der neuen Einschränkungseinstellungen in Xcode](./images/add-new-constraints.png)
+
+1. Wählen Sie die erste Bezeichnung aus, und verwenden Sie dann die Schaltfläche **Ausrichten** , um die Einschränkung **horizontal in Container** mit dem Wert 0 hinzuzufügen.
+1. Verwenden Sie die Schaltfläche **neue Einschränkungen hinzufügen** , um die folgenden Einschränkungen hinzuzufügen:
+
+    - Oberer Bereich für: Benutzerprofil Foto, Wert: Standard
+    - Bottom Space to: Benutzer-e-Mail, Wert: Standard
+
+1. Wählen Sie die zweite Bezeichnung aus, und wählen Sie dann den **Attribut Inspektor**aus.
+1. Ändern Sie die **Farbe** in **dunkelgrau**und ändern Sie die **Schriftart** in **System 12,0**.
+1. Verwenden Sie die Schaltfläche **Ausrichten** , um die Constraint **horizontal in Container** mit dem Wert 0 hinzuzufügen.
+1. Verwenden Sie die Schaltfläche **neue Einschränkungen hinzufügen** , um die folgenden Einschränkungen hinzuzufügen:
+
+    - Oberer Speicherplatz für: Benutzeranzeige Name, Wert: Standard
+    - Bottom Space to: abmelden, Wert: 14
+
+1. Wählen Sie die Schaltfläche aus, und wählen Sie dann den **Attribut Inspektor**aus.
+1. Ändern Sie **Title** den Titel `Sign Out`in.
+1. Verwenden Sie die Schaltfläche **Ausrichten** , um die Constraint **horizontal in Container** mit dem Wert 0 hinzuzufügen.
+1. Verwenden Sie die Schaltfläche **neue Einschränkungen hinzufügen** , um die folgenden Einschränkungen hinzuzufügen:
+
+    - Oberer Bereich für: Benutzer-e-Mail, Wert: 14
+
+1. Wählen Sie das Element der Registerkartenleiste am unteren Rand der Szene aus, und wählen Sie dann den **Attributes Inspector**aus. Ändern Sie **Title** den Titel `Me`in.
 1. Wählen Sie im Menü **Editor** die Option **Probleme beim automatischen Layout auflösen**aus, und wählen Sie dann **fehlende Abhängigkeiten** unterhalb **aller Ansichten im Begrüßungs Ansichts Controller**hinzufügen aus.
 
 Die Begrüßungs Szene sollte wie folgt aussehen, wenn Sie fertig sind.
@@ -231,7 +260,7 @@ Die Begrüßungs Szene sollte wie folgt aussehen, wenn Sie fertig sind.
 1. Fügen Sie mithilfe der **Bibliothek**eine **Text Ansicht** zur **Szene "Element 2**" hinzu.
 1. Wählen Sie die soeben hinzugefügte Textansicht aus. Wählen Sie im **Editor** **Einbetten in**und dann **Bildlaufansicht**aus.
 1. Verbinden Sie die **calendarJSON** -Steckdose mithilfe des **Verbindungs Inspektors**mit der Textansicht.
-1. 1. Wählen Sie das Element der Registerkartenleiste am unteren Rand der Szene aus, und wählen Sie dann den **Attributes Inspector**aus. Ändern Sie **** den Titel `Calendar`in.
+1. Wählen Sie das Element der Registerkartenleiste am unteren Rand der Szene aus, und wählen Sie dann den **Attributes Inspector**aus. Ändern Sie **Title** den Titel `Calendar`in.
 1. Wählen Sie im Menü **Editor** die Option **Probleme beim automatischen Layout auflösen**aus, und wählen Sie dann **fehlende Abhängigkeiten** unterhalb **aller Ansichten im Begrüßungs Ansichts Controller**hinzufügen aus.
 
 Die Kalender Szene sollte wie folgt aussehen, wenn Sie fertig sind.
@@ -250,46 +279,7 @@ Die Kalender Szene sollte wie folgt aussehen, wenn Sie fertig sind.
 
 1. Öffnen Sie **SpinnerViewController. m** , und ersetzen Sie den Inhalt durch den folgenden Code.
 
-    ```objc
-    #import "SpinnerViewController.h"
-
-    @interface SpinnerViewController ()
-    @property (nonatomic) UIActivityIndicatorView* spinner;
-    @end
-
-    @implementation SpinnerViewController
-
-    - (void)viewDidLoad {
-        [super viewDidLoad];
-
-        _spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:
-                    UIActivityIndicatorViewStyleWhiteLarge];
-
-        self.view.backgroundColor = [UIColor colorWithWhite:0 alpha:0.7];
-        [self.view addSubview:_spinner];
-
-        _spinner.translatesAutoresizingMaskIntoConstraints = false;
-        [_spinner startAnimating];
-
-        [_spinner.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor].active = true;
-        [_spinner.centerYAnchor constraintEqualToAnchor:self.view.centerYAnchor].active = true;
-    }
-
-    - (void) startWithContainer:(UIViewController *)container {
-        [container addChildViewController:self];
-        self.view.frame = container.view.frame;
-        [container.view addSubview:self.view];
-        [self didMoveToParentViewController:container];
-    }
-
-    - (void) stop {
-        [self willMoveToParentViewController:nil];
-        [self.view removeFromSuperview];
-        [self removeFromParentViewController];
-    }
-
-    @end
-    ```
+    :::code language="objc" source="../demo/GraphTutorial/GraphTutorial/SpinnerViewController.m" id="SpinnerViewSnippet":::
 
 ## <a name="test-the-app"></a>Testen der App
 
