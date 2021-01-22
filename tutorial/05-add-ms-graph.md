@@ -1,38 +1,59 @@
 <!-- markdownlint-disable MD002 MD041 -->
 
-In dieser Übung werden Sie das Microsoft Graph in die Anwendung integrieren. Für diese Anwendung verwenden Sie das [Microsoft Graph-SDK für Objective C](https://github.com/microsoftgraph/msgraph-sdk-objc) , um Anrufe an Microsoft Graph zu tätigen.
+In dieser Übung integrieren Sie Microsoft Graph in die Anwendung. Für diese Anwendung verwenden Sie das [Microsoft Graph SDK für Objective C,](https://github.com/microsoftgraph/msgraph-sdk-objc) um Aufrufe an Microsoft Graph zu senden.
 
 ## <a name="get-calendar-events-from-outlook"></a>Abrufen von Kalenderereignissen von Outlook
 
-In diesem Abschnitt erweitern Sie die `GraphManager` Klasse so, dass eine Funktion hinzugefügt wird, um die Ereignisse `CalendarViewController` des Benutzers abzurufen und diese neuen Funktionen zu aktualisieren.
+In diesem Abschnitt erweitern Sie die Klasse, um eine Funktion hinzuzufügen, um die Ereignisse des Benutzers für die aktuelle Woche zu erhalten, und aktualisieren, um diese `GraphManager` `CalendarViewController` neue Funktion zu verwenden.
 
-1. Öffnen Sie **graphmanager. h** , und fügen Sie den folgenden `@interface` Code oberhalb der Deklaration hinzu.
+1. Öffnen **Sie GraphManager.h,** und fügen Sie den folgenden Code über der `@interface` Deklaration hinzu.
 
     ```objc
-    typedef void (^GetEventsCompletionBlock)(NSData* _Nullable data, NSError* _Nullable error);
+    typedef void (^GetCalendarViewCompletionBlock)(NSData* _Nullable data,
+                                                   NSError* _Nullable error);
     ```
 
-1. Fügen Sie der `@interface` Deklaration den folgenden Code hinzu.
+1. Fügen Sie der Deklaration den folgenden Code `@interface` hinzu.
 
     ```objc
-    - (void) getEventsWithCompletionBlock: (GetEventsCompletionBlock)completionBlock;
+    - (void) getCalendarViewStartingAt: (NSString*) viewStart
+                              endingAt: (NSString*) viewEnd
+                   withCompletionBlock: (GetCalendarViewCompletionBlock) completion;
     ```
 
-1. Öffnen Sie **graphmanager. m** , und fügen Sie der `GraphManager` Klasse die folgende Funktion hinzu.
+1. Öffnen **Sie GraphManager.m,** und fügen Sie der Klasse die folgende Funktion `GraphManager` hinzu.
 
     ```objc
-    - (void) getEventsWithCompletionBlock:(GetEventsCompletionBlock)completionBlock {
-        // GET /me/events?$select='subject,organizer,start,end'$orderby=createdDateTime DESC
+    - (void) getCalendarViewStartingAt: (NSString *) viewStart
+                              endingAt: (NSString *) viewEnd
+                   withCompletionBlock: (GetCalendarViewCompletionBlock) completion {
+        // Set calendar view start and end parameters
+        NSString* viewStartEndString =
+        [NSString stringWithFormat:@"startDateTime=%@&endDateTime=%@",
+         viewStart,
+         viewEnd];
+
+        // GET /me/calendarview
         NSString* eventsUrlString =
-        [NSString stringWithFormat:@"%@/me/events?%@&%@",
+        [NSString stringWithFormat:@"%@/me/calendarview?%@&%@&%@&%@",
          MSGraphBaseURL,
+         viewStartEndString,
          // Only return these fields in results
          @"$select=subject,organizer,start,end",
-         // Sort results by when they were created, newest first
-         @"$orderby=createdDateTime+DESC"];
+         // Sort results by start time
+         @"$orderby=start/dateTime",
+         // Request at most 25 results
+         @"$top=25"];
 
         NSURL* eventsUrl = [[NSURL alloc] initWithString:eventsUrlString];
         NSMutableURLRequest* eventsRequest = [[NSMutableURLRequest alloc] initWithURL:eventsUrl];
+
+        // Add the Prefer: outlook.timezone header to get start and end times
+        // in user's time zone
+        NSString* preferHeader =
+        [NSString stringWithFormat:@"outlook.timezone=\"%@\"",
+         self.graphTimeZone];
+        [eventsRequest addValue:preferHeader forHTTPHeaderField:@"Prefer"];
 
         MSURLSessionDataTask* eventsDataTask =
         [[MSURLSessionDataTask alloc]
@@ -40,12 +61,12 @@ In diesem Abschnitt erweitern Sie die `GraphManager` Klasse so, dass eine Funkti
          client:self.graphClient
          completion:^(NSData *data, NSURLResponse *response, NSError *error) {
              if (error) {
-                 completionBlock(nil, error);
+                 completion(nil, error);
                  return;
              }
 
              // TEMPORARY
-             completionBlock(data, nil);
+             completion(data, nil);
          }];
 
         // Execute the request
@@ -54,18 +75,33 @@ In diesem Abschnitt erweitern Sie die `GraphManager` Klasse so, dass eine Funkti
     ```
 
     > [!NOTE]
-    > Überprüfen Sie, was `getEventsWithCompletionBlock` der Code in tut.
+    > Überlegen Sie, was der Code `getCalendarViewStartingAt` gerade macht.
     >
-    > - Die URL, die aufgerufen wird, lautet `/v1.0/me/events`.
-    > - Der `select` Abfrageparameter schränkt die für die einzelnen Ereignisse zurückgegebenen Felder auf diejenigen ein, die von der APP tatsächlich verwendet werden.
-    > - Der `orderby` Abfrageparameter sortiert die Ergebnisse nach dem Datum und der Uhrzeit, zu der Sie erstellt wurden, wobei das letzte Element zuerst angezeigt wird.
+    > - Die URL, die aufgerufen wird, lautet `/v1.0/me/calendarview`.
+    >   - Die `startDateTime` Parameter `endDateTime` und Abfrageparameter definieren den Anfang und das Ende der Kalenderansicht.
+    >   - Der Abfrageparameter beschränkt die für jedes Ereignis zurückgegebenen Felder auf die Felder, die `select` tatsächlich von der Ansicht verwendet werden.
+    >   - Der `orderby` Abfrageparameter sortiert die Ergebnisse nach Startzeit.
+    >   - Der `top` Abfrageparameter fordert 25 Ergebnisse pro Seite an.
+    >   - Der Header bewirkt, dass Microsoft Graph die Start- und Endzeiten der einzelnen Ereignisse in der Zeitzone des `Prefer: outlook.timezone` Benutzers zurück gibt.
 
-1. Öffnen Sie **CalendarViewController. m** , und ersetzen Sie den gesamten Inhalt durch den folgenden Code.
+1. Erstellen Sie eine neue **Cocoa Touch-Klasse** im **GraphTutorial-Projekt** mit dem Namen **GraphToIana**. Wählen Sie in der Unterklasse des Felds **"NSObject"** aus. 
+1. Öffnen **Sie GraphToIana.h,** und ersetzen Sie den Inhalt durch den folgenden Code.
+
+    :::code language="objc" source="../demo/GraphTutorial/GraphTutorial/GraphToIana.h" id="GraphToIanaSnippet":::
+
+1. Öffnen **Sie GraphToIana.m,** und ersetzen Sie den Inhalt durch den folgenden Code.
+
+    :::code language="objc" source="../demo/GraphTutorial/GraphTutorial/GraphToIana.m" id="GraphToIanaSnippet":::
+
+    Dies führt eine einfache Suche durch, um einen IANA-Zeitzonenbezeichner basierend auf dem von Microsoft Graph zurückgegebenen Zeitzonennamen zu finden.
+
+1. Öffnen **Sie CalendarViewController.m,** und ersetzen Sie den gesamten Inhalt durch den folgenden Code.
 
     ```objc
     #import "CalendarViewController.h"
     #import "SpinnerViewController.h"
     #import "GraphManager.h"
+    #import "GraphToIana.h"
     #import <MSGraphClientModels/MSGraphClientModels.h>
 
     @interface CalendarViewController ()
@@ -83,8 +119,36 @@ In diesem Abschnitt erweitern Sie die `GraphManager` Klasse so, dass eine Funkti
         self.spinner = [SpinnerViewController alloc];
         [self.spinner startWithContainer:self];
 
+        // Calculate the start and end of the current week
+        NSString* timeZoneId = [GraphToIana
+                                getIanaIdentifierFromGraphIdentifier:
+                                [GraphManager.instance graphTimeZone]];
+
+        NSDate* now = [NSDate date];
+        NSCalendar* calendar = [NSCalendar calendarWithIdentifier:NSCalendarIdentifierGregorian];
+        NSTimeZone* timeZone = [NSTimeZone timeZoneWithName:timeZoneId];
+        [calendar setTimeZone:timeZone];
+
+        NSDateComponents* startOfWeekComponents = [calendar
+                                                   components:NSCalendarUnitCalendar |
+                                                   NSCalendarUnitYearForWeekOfYear |
+                                                   NSCalendarUnitWeekOfYear
+                                                   fromDate:now];
+        NSDate* startOfWeek = [startOfWeekComponents date];
+        NSDate* endOfWeek = [calendar dateByAddingUnit:NSCalendarUnitDay
+                                                 value:7
+                                                toDate:startOfWeek
+                                               options:0];
+
+        // Convert start and end to ISO 8601 strings
+        NSISO8601DateFormatter* isoFormatter = [[NSISO8601DateFormatter alloc] init];
+        NSString* viewStart = [isoFormatter stringFromDate:startOfWeek];
+        NSString* viewEnd = [isoFormatter stringFromDate:endOfWeek];
+
         [GraphManager.instance
-         getEventsWithCompletionBlock:^(NSData * _Nullable data, NSError * _Nullable error) {
+         getCalendarViewStartingAt:viewStart
+         endingAt:viewEnd
+         withCompletionBlock:^(NSData * _Nullable data, NSError * _Nullable error) {
              dispatch_async(dispatch_get_main_queue(), ^{
                  [self.spinner stop];
 
@@ -115,77 +179,103 @@ In diesem Abschnitt erweitern Sie die `GraphManager` Klasse so, dass eine Funkti
     @end
     ```
 
-1. Führen Sie die APP aus, melden Sie sich an, und tippen Sie im Menü auf das Navigationselement **Kalender** . Es sollte ein JSON-Dump der Ereignisse in der App angezeigt werden.
+1. Führen Sie die App aus, melden Sie sich an, und tippen Sie im Menü auf das **Navigationselement** "Kalender". Es sollte ein JSON-Dump der Ereignisse in der App angezeigt werden.
 
 ## <a name="display-the-results"></a>Anzeigen der Ergebnisse
 
-Nun können Sie das JSON-Dump durch etwas ersetzen, um die Ergebnisse auf eine benutzerfreundliche Weise anzuzeigen. In diesem Abschnitt ändern Sie die `getEventsWithCompletionBlock` Funktion so, dass stark typisierte Objekte zurückgegeben werden, `CalendarViewController` und ändern, um die Ereignisse mithilfe einer Tabellenansicht zu rendern.
+Jetzt können Sie das JSON-Dump durch eine benutzerfreundliche Anzeige der Ergebnisse ersetzen. In diesem Abschnitt ändern Sie die Funktion so, dass stark typierte Objekte zurückgeben werden, und ändern sie so, dass zum Rendern der Ereignisse eine `getCalendarViewStartingAt` `CalendarViewController` Tabellenansicht verwendet wird.
 
-### <a name="update-getevents"></a>Aktualisieren von GetEvents
+### <a name="update-getcalendarviewstartingat"></a>GetCalendarViewStartingAt aktualisieren
 
-1. Öffnen Sie **graphmanager. h**. Ändern Sie `GetEventsCompletionBlock` die Typdefinition in Folgendes.
+1. Öffnen **Sie GraphManager.h**. Ändern Sie `GetCalendarViewCompletionBlock` die Typdefinition wie folgt.
 
     ```objc
-    typedef void (^GetEventsCompletionBlock)(NSArray<MSGraphEvent*>* _Nullable events, NSError* _Nullable error);
+    typedef void (^GetCalendarViewCompletionBlock)(NSArray<MSGraphEvent*>* _Nullable events, NSError* _Nullable error);
     ```
 
-1. Öffnen Sie **graphmanager. m**. Ersetzen Sie `completionBlock(data, nil);` die- `getEventsWithCompletionBlock` Funktion durch den folgenden Code.
+1. Öffnen **Sie GraphManager.m**. Ersetzen Sie die vorhandene `getCalendarViewStartingAt`-Funktion durch den folgenden Code.
 
-    :::code language="objc" source="../demo/GraphTutorial/GraphTutorial/GraphManager.m" id="GetEventsSnippet" highlight="24-43":::
+    :::code language="objc" source="../demo/GraphTutorial/GraphTutorial/GraphManager.m" id="GetCalendarViewSnippet" highlight="42-61":::
 
-### <a name="update-calendarviewcontroller"></a>CalendarViewController aktualisieren
+### <a name="update-calendarviewcontroller"></a>Aktualisieren von CalendarViewController
 
-1. Erstellen Sie eine neue **Cocoa Touch-Klassen** Datei im **GraphTutorial** - `CalendarTableViewCell`Projekt mit dem Namen. Wählen Sie **UITableViewCell** in der unter **Klasse von Field aus** .
-1. Öffnen Sie **CalendarTableViewCell. h** , und ersetzen Sie den Inhalt durch den folgenden Code.
+1. Erstellen Sie eine neue **Cocoa Touch Class-Datei** im **GraphTutorial-Projekt** mit dem Namen `CalendarTableViewCell` . Wählen **Sie "UITableViewCell"** in der **Unterklasse des Felds** aus.
+1. Öffnen **Sie CalendarTableViewCell.h,** und ersetzen Sie den Inhalt durch den folgenden Code.
 
     :::code language="objc" source="../demo/GraphTutorial/GraphTutorial/CalendarTableViewCell.h" id="CalendarTableCellSnippet":::
 
-1. Öffnen Sie **CalendarTableViewCell. m** , und ersetzen Sie den Inhalt durch den folgenden Code.
+1. Öffnen **Sie CalendarTableViewCell.m,** und ersetzen Sie den Inhalt durch den folgenden Code.
 
     :::code language="objc" source="../demo/GraphTutorial/GraphTutorial/CalendarTableViewCell.m" id="CalendarTableCellSnippet":::
 
-1. Öffnen Sie **Main. Storyboard** , und suchen Sie die **Kalender Szene**. Wählen Sie die **Ansicht** in der **Kalender Szene** aus, und löschen Sie Sie.
+1. Erstellen Sie eine neue **Cocoa Touch Class-Datei** im **GraphTutorial-Projekt** mit dem Namen `CalendarTableViewController` . Wählen **Sie "UITableViewController"** in der **Unterklasse des Felds** aus.
+1. Öffnen **Sie CalendarTableViewController.h,** und ersetzen Sie den Inhalt durch den folgenden Code.
 
-    ![Screenshot der Ansicht in der Kalender Szene](./images/view-in-calendar-scene.png)
+    :::code language="objc" source="../demo/GraphTutorial/GraphTutorial/CalendarTableViewController.h" id="CalendarTableViewControllerSnippet":::
 
-1. Hinzufügen einer **Tabellenansicht** aus der **Bibliothek** zur **Kalender Szene**.
-1. Wählen Sie die Tabellenansicht aus, und wählen Sie dann den **Attributes Inspector**aus. Legen Sie **Prototype Cells** auf **1**fest.
-1. Verwenden Sie die **Bibliothek** , um der Zelle Prototyp drei **Beschriftungen** hinzuzufügen.
-1. Wählen Sie die Zelle Prototyp aus, und wählen Sie dann den **Identitäts Inspektor**aus. Ändern Sie die **Klasse** in **CalendarTableViewCell**.
-1. Wählen Sie den **Attributes Inspector** aus, `EventCell`und legen Sie **Identifier** auf fest.
-1. Wählen Sie mit ausgewähltem **EventCell** den **Verbindungs Inspektor** aus, `durationLabel`und `organizerLabel`verbinden `subjectLabel` Sie die Beschriftungen, die Sie der Zelle im Storyboard hinzugefügt haben.
-1. Legen Sie die Eigenschaften und Einschränkungen für die drei Beschriftungen wie folgt fest.
+1. Öffnen **Sie CalendarTableViewController.m,** und ersetzen Sie den Inhalt durch den folgenden Code.
 
-    - **Betreff-Bezeichnung**
-        - Add Constraint: Leading Space to Content View Leading Margin, Value: 0
-        - Add Constraint: nachgestellter Raum zur Inhaltsansicht nach folgender Rand, Wert: 0
-        - Hinzufügen von Einschränkungen: oberer Bereich für oberer Rand der Inhaltsansicht, Wert: 0
-    - **Organizer-Bezeichnung**
-        - Schriftart: System 12,0
-        - Add Constraint: Leading Space to Content View Leading Margin, Value: 0
-        - Add Constraint: nachgestellter Raum zur Inhaltsansicht nach folgender Rand, Wert: 0
-        - Add Constraint: Top Space to subject Label Bottom, Value: Standard
-    - **Dauer Bezeichnung**
-        - Schriftart: System 12,0
-        - Farbe: dunkle graue Farbe
-        - Add Constraint: Leading Space to Content View Leading Margin, Value: 0
-        - Add Constraint: nachgestellter Raum zur Inhaltsansicht nach folgender Rand, Wert: 0
-        - Add Constraint: Top Space to Organizer Label Bottom, Value: Standard
-        - Add Constraint: Bottom Space to Content View Bottom Margin, Value: 8
+    :::code language="objc" source="../demo/GraphTutorial/GraphTutorial/CalendarTableViewController.m" id="CalendarTableViewControllerSnippet":::
 
-    ![Screenshot des Zellenlayouts für Prototypen](./images/prototype-cell-layout.png)
+1. Öffnen **Sie Main.storyboard,** und suchen Sie **die Kalender-Szene.** Löschen Sie die Bildlaufansicht aus der Stammansicht.
+1. Fügen Sie **in der Bibliothek** oben in der **Ansicht** eine Navigationsleiste hinzu.
+1. Doppelklicken Sie auf **den Titel** in der Navigationsleiste, und aktualisieren Sie ihn in `Calendar` .
+1. Fügen Sie **in der Bibliothek** rechts neben der Navigationsleiste ein Balkenschaltflächeelement hinzu. 
+1. Wählen Sie die Schaltfläche für die neue Leiste und dann den **Attributprüfungsinspektor aus.** Bild **in** Plus **ändern.**
+1. Fügen Sie der  **Ansicht unter der Navigationsleiste** eine Containeransicht aus der Bibliothek hinzu. Ändern Sie die Größe der Containeransicht, um den verbleibenden Platz in der Ansicht zu übernehmen.
+1. Legen Sie Einschränkungen für die Navigationsleiste und die Containeransicht wie folgt ein.
 
-1. Öffnen Sie **CalendarViewController. h** , und `calendarJSON` entfernen Sie die Eigenschaft.
-1. Ändern Sie `@interface` die Deklaration in Folgendes.
+    - **Navigationsleiste**
+        - Einschränkung hinzufügen: Höhe, Wert: 44
+        - Einschränkung hinzufügen: Führendes Leerzeichen zum sicheren Bereich, Wert: 0
+        - Einschränkung hinzufügen: Nachgestellter Speicherplatz zum sicheren Bereich, Wert: 0
+        - Einschränkung hinzufügen: Oberster Platz zum sicheren Bereich, Wert: 0
+    - **Containeransicht**
+        - Einschränkung hinzufügen: Führendes Leerzeichen zum sicheren Bereich, Wert: 0
+        - Einschränkung hinzufügen: Nachgestellter Speicherplatz zum sicheren Bereich, Wert: 0
+        - Einschränkung hinzufügen: Oberster Platz auf der Navigationsleiste unten, Wert: 0
+        - Einschränkung hinzufügen: Unterer Platz zum sicheren Bereich, Wert: 0
 
-    ```objc
-    @interface CalendarViewController : UITableViewController
-    ```
+1. Suchen Sie den zweiten Ansichtscontroller, der dem Storyboard hinzugefügt wurde, wenn Sie die Containeransicht hinzugefügt haben. Es wird durch eine **Einbettungs-Segue** mit der Kalenderszene verbunden. Wählen Sie diesen Controller aus, und verwenden Sie den **Identitätsinspektor,** um **die Klasse in** **CalendarTableViewController zu ändern.**
+1. Löschen Sie **die Ansicht** aus dem **Kalender tabellenansichtscontroller**.
+1. Fügen Sie dem  **Tabellenansichtscontroller** des Kalenders eine Tabellenansicht aus der **Bibliothek hinzu.**
+1. Wählen Sie die Tabellenansicht und dann den **Attributes Inspector aus.** Set **Prototype Cells** to **1**.
+1. Ziehen Sie den unteren Rand der Prototypzelle, um Ihnen einen größeren Bereich für die Arbeit zu bieten.
+1. Verwenden Sie die **Bibliothek,** um **der** Prototypzelle drei Beschriftungen hinzuzufügen.
+1. Wählen Sie die Prototypzelle und dann den **Identitätsinspektor aus.** Ändern **Sie die Klasse** in **CalendarTableViewCell**.
+1. Wählen Sie den **Attributes Inspector aus,** und legen **Sie den Bezeichner auf** . `EventCell`
+1. Wenn Die **EventCell ausgewählt ist,** wählen Sie den **Connections Inspector** und verbinden , und mit den Beschriftungen, die Sie der Zelle `durationLabel` im `organizerLabel` `subjectLabel` Storyboard hinzugefügt haben.
+1. Legen Sie die Eigenschaften und Einschränkungen für die drei Beschriftungen wie folgt dar.
 
-1. Öffnen Sie **CalendarViewController. m** , und ersetzen Sie den Inhalt durch den folgenden Code.
+    - **Betreffbezeichnung**
+        - Einschränkung hinzufügen: Führendes Leerzeichen zum führenden Rand der Inhaltsansicht, Wert: 0
+        - Einschränkung hinzufügen: Nachgestellter Speicherplatz zum nachgestellten Rand der Inhaltsansicht, Wert: 0
+        - Einschränkung hinzufügen: Oberster Platz am oberen Rand der Inhaltsansicht, Wert: 0
+    - **Bezeichnung des Organisators**
+        - Schriftart: System 12.0
+        - Einschränkung hinzufügen: Höhe, Wert: 15
+        - Einschränkung hinzufügen: Führendes Leerzeichen zum führenden Rand der Inhaltsansicht, Wert: 0
+        - Einschränkung hinzufügen: Nachgestellter Speicherplatz zum nachgestellten Rand der Inhaltsansicht, Wert: 0
+        - Einschränkung hinzufügen: Oberster Platz im unteren Bereich der Betreffbezeichnung, Wert: Standard
+    - **Bezeichnung "Dauer"**
+        - Schriftart: System 12.0
+        - Farbe: Dunkelgrau
+        - Einschränkung hinzufügen: Höhe, Wert: 15
+        - Einschränkung hinzufügen: Führendes Leerzeichen zum führenden Rand der Inhaltsansicht, Wert: 0
+        - Einschränkung hinzufügen: Nachgestellter Speicherplatz zum nachgestellten Rand der Inhaltsansicht, Wert: 0
+        - Einschränkung hinzufügen: Oberster Platz am unteren Rand der Bezeichnung "Organizer", Wert: Standard
+        - Einschränkung hinzufügen: Unterer Bereich zum unteren Rand der Inhaltsansicht, Wert: 0
 
-    :::code language="objc" source="../demo/GraphTutorial/GraphTutorial/CalendarViewController.m" id="CalendarViewSnippet":::
+1. Select the **EventCell,** then select the **Size Inspector**. Aktivieren **Sie "Automatisch** für **Zeilenhöhe".**
 
-1. Führen Sie die APP aus, melden Sie sich an, und tippen Sie auf die Registerkarte **Kalender** . Die Liste der Ereignisse sollte angezeigt werden.
+    ![Screenshot der Ansichtscontroller für Kalender- und Kalendertabelle](images/calendar-table-storyboard.png)
+
+1. Öffnen **Sie CalendarViewController.h,** und entfernen Sie die `calendarJSON` Eigenschaft.
+
+1. Öffnen **Sie CalendarViewController.m,** und ersetzen Sie den Inhalt durch den folgenden Code.
+
+    :::code language="objc" source="../demo/GraphTutorial/GraphTutorial/CalendarViewController.m" id="CalendarViewControllerSnippet":::
+
+1. Führen Sie die App aus, melden Sie sich an, und tippen Sie auf die **Registerkarte "Kalender".** Die Liste der Ereignisse sollte angezeigt werden.
 
     ![Ein Screenshot der Tabelle mit Ereignissen](./images/calendar-list.png)
