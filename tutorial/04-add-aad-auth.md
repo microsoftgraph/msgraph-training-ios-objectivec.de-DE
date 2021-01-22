@@ -1,33 +1,33 @@
 <!-- markdownlint-disable MD002 MD041 -->
 
-<span data-ttu-id="fedcc-101">In dieser Übung erweitern Sie die Anwendung aus der vorherigen Übung, um die Authentifizierung mit Azure AD zu unterstützen.</span><span class="sxs-lookup"><span data-stu-id="fedcc-101">In this exercise you will extend the application from the previous exercise to support authentication with Azure AD.</span></span> <span data-ttu-id="fedcc-102">Dies ist erforderlich, um das erforderliche OAuth-Zugriffstoken zum Aufrufen von Microsoft Graph zu erhalten.</span><span class="sxs-lookup"><span data-stu-id="fedcc-102">This is required to obtain the necessary OAuth access token to call the Microsoft Graph.</span></span> <span data-ttu-id="fedcc-103">Hierzu integrieren Sie die [Microsoft-Authentifizierungsbibliothek (MSAL) für IOS](https://github.com/AzureAD/microsoft-authentication-library-for-objc) in die Anwendung.</span><span class="sxs-lookup"><span data-stu-id="fedcc-103">To do this, you will integrate the [Microsoft Authentication Library (MSAL) for iOS](https://github.com/AzureAD/microsoft-authentication-library-for-objc) into the application.</span></span>
+<span data-ttu-id="0968b-101">In dieser Übung erweitern Sie die Anwendung aus der vorherigen Übung, um die Authentifizierung mit Azure AD zu unterstützen.</span><span class="sxs-lookup"><span data-stu-id="0968b-101">In this exercise you will extend the application from the previous exercise to support authentication with Azure AD.</span></span> <span data-ttu-id="0968b-102">Dies ist erforderlich, um das erforderliche OAuth-Zugriffstoken zum Aufrufen von Microsoft Graph abzurufen.</span><span class="sxs-lookup"><span data-stu-id="0968b-102">This is required to obtain the necessary OAuth access token to call the Microsoft Graph.</span></span> <span data-ttu-id="0968b-103">Dazu integrieren Sie die [Microsoft Authentication Library (MSAL) für iOS](https://github.com/AzureAD/microsoft-authentication-library-for-objc) in die Anwendung.</span><span class="sxs-lookup"><span data-stu-id="0968b-103">To do this, you will integrate the [Microsoft Authentication Library (MSAL) for iOS](https://github.com/AzureAD/microsoft-authentication-library-for-objc) into the application.</span></span>
 
-1. <span data-ttu-id="fedcc-104">Erstellen Sie eine neue **Eigenschaftenlisten** Datei im **GraphTutorial** -Projekt mit dem Namen **AuthSettings. plist**.</span><span class="sxs-lookup"><span data-stu-id="fedcc-104">Create a new **Property List** file in the **GraphTutorial** project named **AuthSettings.plist**.</span></span>
-1. <span data-ttu-id="fedcc-105">Fügen Sie die folgenden Elemente zur Datei im **Stamm** Wörterbuch hinzu.</span><span class="sxs-lookup"><span data-stu-id="fedcc-105">Add the following items to the file in the **Root** dictionary.</span></span>
+1. <span data-ttu-id="0968b-104">Erstellen Sie eine neue **Eigenschaftslistendatei** im **GraphTutorial-Projekt** mit dem Namen **AuthSettings.plist**.</span><span class="sxs-lookup"><span data-stu-id="0968b-104">Create a new **Property List** file in the **GraphTutorial** project named **AuthSettings.plist**.</span></span>
+1. <span data-ttu-id="0968b-105">Fügen Sie der Datei im Stammverzeichnis die folgenden **Elemente** hinzu.</span><span class="sxs-lookup"><span data-stu-id="0968b-105">Add the following items to the file in the **Root** dictionary.</span></span>
 
-    | <span data-ttu-id="fedcc-106">Key</span><span class="sxs-lookup"><span data-stu-id="fedcc-106">Key</span></span> | <span data-ttu-id="fedcc-107">Typ</span><span class="sxs-lookup"><span data-stu-id="fedcc-107">Type</span></span> | <span data-ttu-id="fedcc-108">Wert</span><span class="sxs-lookup"><span data-stu-id="fedcc-108">Value</span></span> |
+    | <span data-ttu-id="0968b-106">Key</span><span class="sxs-lookup"><span data-stu-id="0968b-106">Key</span></span> | <span data-ttu-id="0968b-107">Typ</span><span class="sxs-lookup"><span data-stu-id="0968b-107">Type</span></span> | <span data-ttu-id="0968b-108">Wert</span><span class="sxs-lookup"><span data-stu-id="0968b-108">Value</span></span> |
     |-----|------|-------|
-    | `AppId` | <span data-ttu-id="fedcc-109">Zeichenfolge</span><span class="sxs-lookup"><span data-stu-id="fedcc-109">String</span></span> | <span data-ttu-id="fedcc-110">Die Anwendungs-ID aus dem Azure-Portal</span><span class="sxs-lookup"><span data-stu-id="fedcc-110">The application ID from the Azure portal</span></span> |
-    | `GraphScopes` | <span data-ttu-id="fedcc-111">Array</span><span class="sxs-lookup"><span data-stu-id="fedcc-111">Array</span></span> | <span data-ttu-id="fedcc-112">Zwei Zeichenfolgenwerte `User.Read` : und`Calendars.Read`</span><span class="sxs-lookup"><span data-stu-id="fedcc-112">Two String values: `User.Read` and `Calendars.Read`</span></span> |
+    | `AppId` | <span data-ttu-id="0968b-109">Zeichenfolge</span><span class="sxs-lookup"><span data-stu-id="0968b-109">String</span></span> | <span data-ttu-id="0968b-110">Die Anwendungs-ID aus dem Azure-Portal</span><span class="sxs-lookup"><span data-stu-id="0968b-110">The application ID from the Azure portal</span></span> |
+    | `GraphScopes` | <span data-ttu-id="0968b-111">Array</span><span class="sxs-lookup"><span data-stu-id="0968b-111">Array</span></span> | <span data-ttu-id="0968b-112">Drei Zeichenfolgenwerte: `User.Read` `MailboxSettings.Read` , und `Calendars.ReadWrite`</span><span class="sxs-lookup"><span data-stu-id="0968b-112">Three String values: `User.Read`, `MailboxSettings.Read`, and `Calendars.ReadWrite`</span></span> |
 
-    ![Ein Screenshot der Datei AuthSettings. plist in Xcode](./images/auth-settings.png)
+    ![Screenshot der Datei "AuthSettings.plist" in Xcode](./images/auth-settings.png)
 
 > [!IMPORTANT]
-> <span data-ttu-id="fedcc-114">Wenn Sie die Quellcodeverwaltung wie git verwenden, wäre es nun ein guter Zeitpunkt, die Datei **AuthSettings. plist** aus der Quellcodeverwaltung auszuschließen, um unbeabsichtigtes Auslaufen ihrer APP-ID zu vermeiden.</span><span class="sxs-lookup"><span data-stu-id="fedcc-114">If you're using source control such as git, now would be a good time to exclude the **AuthSettings.plist** file from source control to avoid inadvertently leaking your app ID.</span></span>
+> <span data-ttu-id="0968b-114">Wenn Sie Quellcodeverwaltung wie Git verwenden, wäre es jetzt ein guter Zeitpunkt, die **Datei "AuthSettings.plist"** aus der Quellcodeverwaltung auszuschließen, um zu verhindern, dass Ihre App-ID versehentlich ins Spiel kommt.</span><span class="sxs-lookup"><span data-stu-id="0968b-114">If you're using source control such as git, now would be a good time to exclude the **AuthSettings.plist** file from source control to avoid inadvertently leaking your app ID.</span></span>
 
-## <a name="implement-sign-in"></a><span data-ttu-id="fedcc-115">Implementieren der Anmeldung</span><span class="sxs-lookup"><span data-stu-id="fedcc-115">Implement sign-in</span></span>
+## <a name="implement-sign-in"></a><span data-ttu-id="0968b-115">Implementieren der Anmeldung</span><span class="sxs-lookup"><span data-stu-id="0968b-115">Implement sign-in</span></span>
 
-<span data-ttu-id="fedcc-116">In diesem Abschnitt Konfigurieren Sie das Projekt für MSAL, erstellen eine Authentifizierungs-Manager-Klasse und aktualisieren die APP, um sich anzumelden und abzumelden.</span><span class="sxs-lookup"><span data-stu-id="fedcc-116">In this section you will configure the project for MSAL, create an authentication manager class, and update the app to sign in and sign out.</span></span>
+<span data-ttu-id="0968b-116">In diesem Abschnitt konfigurieren Sie das Projekt für MSAL, erstellen eine Authentifizierungs-Manager-Klasse und aktualisieren die App so, dass sie sich anmeldet und abmeldet.</span><span class="sxs-lookup"><span data-stu-id="0968b-116">In this section you will configure the project for MSAL, create an authentication manager class, and update the app to sign in and sign out.</span></span>
 
-### <a name="configure-project-for-msal"></a><span data-ttu-id="fedcc-117">Konfigurieren des Projekts für MSAL</span><span class="sxs-lookup"><span data-stu-id="fedcc-117">Configure project for MSAL</span></span>
+### <a name="configure-project-for-msal"></a><span data-ttu-id="0968b-117">Konfigurieren des Projekts für MSAL</span><span class="sxs-lookup"><span data-stu-id="0968b-117">Configure project for MSAL</span></span>
 
-1. <span data-ttu-id="fedcc-118">Fügen Sie der Projektfunktion eine neue Schlüsselbund Gruppe hinzu.</span><span class="sxs-lookup"><span data-stu-id="fedcc-118">Add a new keychain group to your project's capabilities.</span></span>
-    1. <span data-ttu-id="fedcc-119">Wählen Sie das **GraphTutorial** -Projekt aus, und **Signieren Sie & Funktionen**.</span><span class="sxs-lookup"><span data-stu-id="fedcc-119">Select the **GraphTutorial** project, then **Signing & Capabilities**.</span></span>
-    1. <span data-ttu-id="fedcc-120">Wählen Sie **+-Funktion**aus, und doppelklicken Sie dann auf **Schlüsselbund Freigabe**.</span><span class="sxs-lookup"><span data-stu-id="fedcc-120">Select **+ Capability**, then double-click **Keychain Sharing**.</span></span>
-    1. <span data-ttu-id="fedcc-121">Fügen Sie eine Schlüsselbund Gruppe mit `com.microsoft.adalcache`dem Wert hinzu.</span><span class="sxs-lookup"><span data-stu-id="fedcc-121">Add a keychain group with the value `com.microsoft.adalcache`.</span></span>
+1. <span data-ttu-id="0968b-118">Fügen Sie den Projektfunktionen eine neue Schlüsselbundgruppe hinzu.</span><span class="sxs-lookup"><span data-stu-id="0968b-118">Add a new keychain group to your project's capabilities.</span></span>
+    1. <span data-ttu-id="0968b-119">Wählen Sie **das GraphTutorial-Projekt** aus, und signieren **& Funktionen.**</span><span class="sxs-lookup"><span data-stu-id="0968b-119">Select the **GraphTutorial** project, then **Signing & Capabilities**.</span></span>
+    1. <span data-ttu-id="0968b-120">Wählen **Sie +Funktion** aus, und doppelklicken Sie dann **auf Schlüsselbundfreigabe.**</span><span class="sxs-lookup"><span data-stu-id="0968b-120">Select **+ Capability**, then double-click **Keychain Sharing**.</span></span>
+    1. <span data-ttu-id="0968b-121">Fügen Sie eine Schlüsselbundgruppe mit dem Wert `com.microsoft.adalcache` hinzu.</span><span class="sxs-lookup"><span data-stu-id="0968b-121">Add a keychain group with the value `com.microsoft.adalcache`.</span></span>
 
-1. <span data-ttu-id="fedcc-122">Steuerelement klicken Sie auf **Info. plist** , und wählen Sie dann **Öffnen als**, dann **Quellcode**aus.</span><span class="sxs-lookup"><span data-stu-id="fedcc-122">Control click **Info.plist** and select **Open As**, then **Source Code**.</span></span>
-1. <span data-ttu-id="fedcc-123">Fügen Sie das folgende innerhalb `<dict>` des-Elements hinzu.</span><span class="sxs-lookup"><span data-stu-id="fedcc-123">Add the following inside the `<dict>` element.</span></span>
+1. <span data-ttu-id="0968b-122">Steuerelement klicken **Sie auf "Info.plist",** und wählen **Sie "Öffnen als"** und dann **"Quellcode" aus.**</span><span class="sxs-lookup"><span data-stu-id="0968b-122">Control click **Info.plist** and select **Open As**, then **Source Code**.</span></span>
+1. <span data-ttu-id="0968b-123">Fügen Sie Folgendes innerhalb des Elements `<dict>` hinzu.</span><span class="sxs-lookup"><span data-stu-id="0968b-123">Add the following inside the `<dict>` element.</span></span>
 
     ```xml
     <key>CFBundleURLTypes</key>
@@ -46,55 +46,55 @@
     </array>
     ```
 
-1. <span data-ttu-id="fedcc-124">Öffnen Sie **AppDelegate. m** , und fügen Sie die folgende Importanweisung am Anfang der Datei hinzu.</span><span class="sxs-lookup"><span data-stu-id="fedcc-124">Open **AppDelegate.m** and add the following import statement at the top of the file.</span></span>
+1. <span data-ttu-id="0968b-124">Öffnen **Sie "AppDelegate.m",** und fügen Sie die folgende Import-Anweisung am Anfang der Datei hinzu.</span><span class="sxs-lookup"><span data-stu-id="0968b-124">Open **AppDelegate.m** and add the following import statement at the top of the file.</span></span>
 
     ```objc
     #import <MSAL/MSAL.h>
     ```
 
-1. <span data-ttu-id="fedcc-125">Fügen Sie die folgende Funktion zur `AppDelegate`-Klasse hinzu:</span><span class="sxs-lookup"><span data-stu-id="fedcc-125">Add the following function to the `AppDelegate` class.</span></span>
+1. <span data-ttu-id="0968b-125">Fügen Sie die folgende Funktion zur `AppDelegate`-Klasse hinzu:</span><span class="sxs-lookup"><span data-stu-id="0968b-125">Add the following function to the `AppDelegate` class.</span></span>
 
     :::code language="objc" source="../demo/GraphTutorial/GraphTutorial/AppDelegate.m" id="HandleMsalResponseSnippet":::
 
-### <a name="create-authentication-manager"></a><span data-ttu-id="fedcc-126">Erstellen des Authentifizierungs-Managers</span><span class="sxs-lookup"><span data-stu-id="fedcc-126">Create authentication manager</span></span>
+### <a name="create-authentication-manager"></a><span data-ttu-id="0968b-126">Erstellen eines Authentifizierungs-Managers</span><span class="sxs-lookup"><span data-stu-id="0968b-126">Create authentication manager</span></span>
 
-1. <span data-ttu-id="fedcc-127">Erstellen Sie eine neue **Cocoa Touch-Klasse** im **GraphTutorial** -Projekt mit dem Namen **AuthenticationManager**.</span><span class="sxs-lookup"><span data-stu-id="fedcc-127">Create a new **Cocoa Touch Class** in the **GraphTutorial** project named **AuthenticationManager**.</span></span> <span data-ttu-id="fedcc-128">Wählen Sie **NSObject** in der unter **Klasse von Field aus** .</span><span class="sxs-lookup"><span data-stu-id="fedcc-128">Choose **NSObject** in the **Subclass of** field.</span></span>
-1. <span data-ttu-id="fedcc-129">Öffnen Sie **AuthenticationManager. h** , und ersetzen Sie den Inhalt durch den folgenden Code.</span><span class="sxs-lookup"><span data-stu-id="fedcc-129">Open **AuthenticationManager.h** and replace its contents with the following code.</span></span>
+1. <span data-ttu-id="0968b-127">Erstellen Sie eine neue **Cocoa Touch-Klasse** im **GraphTutorial-Projekt** mit dem Namen **AuthenticationManager**.</span><span class="sxs-lookup"><span data-stu-id="0968b-127">Create a new **Cocoa Touch Class** in the **GraphTutorial** project named **AuthenticationManager**.</span></span> <span data-ttu-id="0968b-128">Wählen Sie in der Unterklasse des Felds **"NSObject"** aus. </span><span class="sxs-lookup"><span data-stu-id="0968b-128">Choose **NSObject** in the **Subclass of** field.</span></span>
+1. <span data-ttu-id="0968b-129">Öffnen **Sie "AuthenticationManager.h",** und ersetzen Sie den Inhalt durch den folgenden Code.</span><span class="sxs-lookup"><span data-stu-id="0968b-129">Open **AuthenticationManager.h** and replace its contents with the following code.</span></span>
 
     :::code language="objc" source="../demo/GraphTutorial/GraphTutorial/AuthenticationManager.h" id="AuthManagerSnippet":::
 
-1. <span data-ttu-id="fedcc-130">Öffnen Sie **AuthenticationManager. m** , und ersetzen Sie den Inhalt durch den folgenden Code.</span><span class="sxs-lookup"><span data-stu-id="fedcc-130">Open **AuthenticationManager.m** and replace its contents with the following code.</span></span>
+1. <span data-ttu-id="0968b-130">Öffnen **Sie "AuthenticationManager.m",** und ersetzen Sie den Inhalt durch den folgenden Code.</span><span class="sxs-lookup"><span data-stu-id="0968b-130">Open **AuthenticationManager.m** and replace its contents with the following code.</span></span>
 
     :::code language="objc" source="../demo/GraphTutorial/GraphTutorial/AuthenticationManager.m" id="AuthManagerSnippet":::
 
-### <a name="add-sign-in-and-sign-out"></a><span data-ttu-id="fedcc-131">Hinzufügen von Anmelde-und Abmeldungen</span><span class="sxs-lookup"><span data-stu-id="fedcc-131">Add sign-in and sign-out</span></span>
+### <a name="add-sign-in-and-sign-out"></a><span data-ttu-id="0968b-131">Hinzufügen von Anmeldung und Abmelden</span><span class="sxs-lookup"><span data-stu-id="0968b-131">Add sign-in and sign-out</span></span>
 
-1. <span data-ttu-id="fedcc-132">Öffnen Sie die Datei **SignInViewController. m** , und ersetzen Sie den Inhalt durch den folgenden Code.</span><span class="sxs-lookup"><span data-stu-id="fedcc-132">Open the **SignInViewController.m** file and replace its contents with the following code.</span></span>
+1. <span data-ttu-id="0968b-132">Öffnen Sie **die Datei SignInViewController.m,** und ersetzen Sie den Inhalt durch den folgenden Code.</span><span class="sxs-lookup"><span data-stu-id="0968b-132">Open the **SignInViewController.m** file and replace its contents with the following code.</span></span>
 
     :::code language="objc" source="../demo/GraphTutorial/GraphTutorial/SignInViewController.m" id="SignInViewSnippet":::
 
-1. <span data-ttu-id="fedcc-133">Öffnen Sie **WelcomeViewController. m** , und fügen `import` Sie die folgende Anweisung am Anfang der Datei hinzu.</span><span class="sxs-lookup"><span data-stu-id="fedcc-133">Open **WelcomeViewController.m** and add the following `import` statement to the top of the file.</span></span>
+1. <span data-ttu-id="0968b-133">Öffnen **Sie WelcomeViewController.m,** und fügen Sie die folgende Anweisung `import` am Oberen Rand der Datei hinzu.</span><span class="sxs-lookup"><span data-stu-id="0968b-133">Open **WelcomeViewController.m** and add the following `import` statement to the top of the file.</span></span>
 
     ```objc
     #import "AuthenticationManager.h"
     ```
 
-1. <span data-ttu-id="fedcc-134">Ersetzen Sie die vorhandene `signOut`-Funktion durch Folgendes.</span><span class="sxs-lookup"><span data-stu-id="fedcc-134">Replace the existing `signOut` function with the following.</span></span>
+1. <span data-ttu-id="0968b-134">Ersetzen Sie die vorhandene `signOut`-Funktion durch Folgendes.</span><span class="sxs-lookup"><span data-stu-id="0968b-134">Replace the existing `signOut` function with the following.</span></span>
 
     :::code language="objc" source="../demo/GraphTutorial/GraphTutorial/WelcomeViewController.m" id="SignOutSnippet":::
 
-1. <span data-ttu-id="fedcc-135">Speichern Sie Ihre Änderungen, und starten Sie die Anwendung im Simulator neu.</span><span class="sxs-lookup"><span data-stu-id="fedcc-135">Save your changes and restart the application in Simulator.</span></span>
+1. <span data-ttu-id="0968b-135">Speichern Sie Ihre Änderungen, und starten Sie die Anwendung im Simulator neu.</span><span class="sxs-lookup"><span data-stu-id="0968b-135">Save your changes and restart the application in Simulator.</span></span>
 
-<span data-ttu-id="fedcc-136">Wenn Sie sich bei der App anmelden, sollten Sie ein Zugriffstoken sehen, das im Ausgabefenster von Xcode angezeigt wird.</span><span class="sxs-lookup"><span data-stu-id="fedcc-136">If you sign in to the app, you should see an access token displayed in the output window in Xcode.</span></span>
+<span data-ttu-id="0968b-136">Wenn Sie sich bei der App anmelden, sollte ein Zugriffstoken im Ausgabefenster in Xcode angezeigt werden.</span><span class="sxs-lookup"><span data-stu-id="0968b-136">If you sign in to the app, you should see an access token displayed in the output window in Xcode.</span></span>
 
 ![Screenshot des Ausgabefensters in Xcode mit einem Zugriffstoken](./images/access-token-output.png)
 
-## <a name="get-user-details"></a><span data-ttu-id="fedcc-138">Benutzerdetails abrufen</span><span class="sxs-lookup"><span data-stu-id="fedcc-138">Get user details</span></span>
+## <a name="get-user-details"></a><span data-ttu-id="0968b-138">Benutzerdetails abrufen</span><span class="sxs-lookup"><span data-stu-id="0968b-138">Get user details</span></span>
 
-<span data-ttu-id="fedcc-139">In diesem Abschnitt erstellen Sie eine Hilfsklasse, die alle Aufrufe von Microsoft Graph enthält, und aktualisieren Sie `WelcomeViewController` , um die neue Klasse zum Abrufen des angemeldeten Benutzers zu verwenden.</span><span class="sxs-lookup"><span data-stu-id="fedcc-139">In this section you will create a helper class to hold all of the calls to Microsoft Graph and update the `WelcomeViewController` to use this new class to get the logged-in user.</span></span>
+<span data-ttu-id="0968b-139">In diesem Abschnitt erstellen Sie eine Hilfsklasse für alle Aufrufe von Microsoft Graph und aktualisieren die Klasse so, dass sie diese neue Klasse verwendet, um den angemeldeten `WelcomeViewController` Benutzer zu erhalten.</span><span class="sxs-lookup"><span data-stu-id="0968b-139">In this section you will create a helper class to hold all of the calls to Microsoft Graph and update the `WelcomeViewController` to use this new class to get the logged-in user.</span></span>
 
-1. <span data-ttu-id="fedcc-140">Erstellen Sie eine neue **Cocoa Touch-Klasse** im **GraphTutorial** -Projekt mit dem Namen **graphmanager**.</span><span class="sxs-lookup"><span data-stu-id="fedcc-140">Create a new **Cocoa Touch Class** in the **GraphTutorial** project named **GraphManager**.</span></span> <span data-ttu-id="fedcc-141">Wählen Sie **NSObject** in der unter **Klasse von Field aus** .</span><span class="sxs-lookup"><span data-stu-id="fedcc-141">Choose **NSObject** in the **Subclass of** field.</span></span>
-1. <span data-ttu-id="fedcc-142">Öffnen Sie **graphmanager. h** , und ersetzen Sie den Inhalt durch den folgenden Code.</span><span class="sxs-lookup"><span data-stu-id="fedcc-142">Open **GraphManager.h** and replace its contents with the following code.</span></span>
+1. <span data-ttu-id="0968b-140">Erstellen Sie eine neue **Cocoa Touch-Klasse** im **GraphTutorial-Projekt** mit dem Namen **GraphManager**.</span><span class="sxs-lookup"><span data-stu-id="0968b-140">Create a new **Cocoa Touch Class** in the **GraphTutorial** project named **GraphManager**.</span></span> <span data-ttu-id="0968b-141">Wählen Sie in der Unterklasse des Felds **"NSObject"** aus. </span><span class="sxs-lookup"><span data-stu-id="0968b-141">Choose **NSObject** in the **Subclass of** field.</span></span>
+1. <span data-ttu-id="0968b-142">Öffnen **Sie "GraphManager.h",** und ersetzen Sie den Inhalt durch den folgenden Code.</span><span class="sxs-lookup"><span data-stu-id="0968b-142">Open **GraphManager.h** and replace its contents with the following code.</span></span>
 
     ```objc
     #import <Foundation/Foundation.h>
@@ -105,19 +105,20 @@
 
     NS_ASSUME_NONNULL_BEGIN
 
-    typedef void (^GetMeCompletionBlock)(MSGraphUser* _Nullable user, NSError* _Nullable error);
+    typedef void (^GetMeCompletionBlock)(MSGraphUser* _Nullable user,
+                                         NSError* _Nullable error);
 
     @interface GraphManager : NSObject
 
     + (id) instance;
-    - (void) getMeWithCompletionBlock: (GetMeCompletionBlock)completionBlock;
+    - (void) getMeWithCompletionBlock: (GetMeCompletionBlock) completion;
 
     @end
 
     NS_ASSUME_NONNULL_END
     ```
 
-1. <span data-ttu-id="fedcc-143">Öffnen Sie **graphmanager. m** , und ersetzen Sie den Inhalt durch den folgenden Code.</span><span class="sxs-lookup"><span data-stu-id="fedcc-143">Open **GraphManager.m** and replace its contents with the following code.</span></span>
+1. <span data-ttu-id="0968b-143">Öffnen **Sie GraphManager.m,** und ersetzen Sie den Inhalt durch den folgenden Code.</span><span class="sxs-lookup"><span data-stu-id="0968b-143">Open **GraphManager.m** and replace its contents with the following code.</span></span>
 
     ```objc
     #import "GraphManager.h"
@@ -150,9 +151,11 @@
         return self;
     }
 
-    - (void) getMeWithCompletionBlock:(GetMeCompletionBlock)completionBlock {
+    - (void) getMeWithCompletionBlock: (GetMeCompletionBlock) completion {
         // GET /me
-        NSString* meUrlString = [NSString stringWithFormat:@"%@/me", MSGraphBaseURL];
+        NSString* meUrlString = [NSString stringWithFormat:@"%@/me?%@",
+                                 MSGraphBaseURL,
+                                 @"$select=displayName,mail,mailboxSettings,userPrincipalName"];
         NSURL* meUrl = [[NSURL alloc] initWithString:meUrlString];
         NSMutableURLRequest* meRequest = [[NSMutableURLRequest alloc] initWithURL:meUrl];
 
@@ -162,7 +165,7 @@
             client:self.graphClient
             completion:^(NSData *data, NSURLResponse *response, NSError *error) {
                 if (error) {
-                    completionBlock(nil, error);
+                    completion(nil, error);
                     return;
                 }
 
@@ -171,9 +174,9 @@
                 MSGraphUser* user = [[MSGraphUser alloc] initWithData:data error:&graphError];
 
                 if (graphError) {
-                    completionBlock(nil, graphError);
+                    completion(nil, graphError);
                 } else {
-                    completionBlock(user, nil);
+                    completion(user, nil);
                 }
             }];
 
@@ -184,7 +187,7 @@
     @end
     ```
 
-1. <span data-ttu-id="fedcc-144">Öffnen Sie **WelcomeViewController. m** , und fügen `#import` Sie die folgenden Anweisungen am Anfang der Datei hinzu.</span><span class="sxs-lookup"><span data-stu-id="fedcc-144">Open **WelcomeViewController.m** and add the following `#import` statements at the top of the file.</span></span>
+1. <span data-ttu-id="0968b-144">Öffnen **Sie WelcomeViewController.m,** und fügen Sie die folgenden Anweisungen `#import` am Anfang der Datei hinzu.</span><span class="sxs-lookup"><span data-stu-id="0968b-144">Open **WelcomeViewController.m** and add the following `#import` statements at the top of the file.</span></span>
 
     ```objc
     #import "SpinnerViewController.h"
@@ -192,14 +195,14 @@
     #import <MSGraphClientModels/MSGraphClientModels.h>
     ```
 
-1. <span data-ttu-id="fedcc-145">Fügen Sie die folgende Eigenschaft zur `WelcomeViewController` Schnittstellendeklaration hinzu.</span><span class="sxs-lookup"><span data-stu-id="fedcc-145">Add the following property to the `WelcomeViewController` interface declaration.</span></span>
+1. <span data-ttu-id="0968b-145">Fügen Sie der Schnittstellendeklaration die folgende `WelcomeViewController` Eigenschaft hinzu.</span><span class="sxs-lookup"><span data-stu-id="0968b-145">Add the following property to the `WelcomeViewController` interface declaration.</span></span>
 
     ```objc
     @property SpinnerViewController* spinner;
     ```
 
-1. <span data-ttu-id="fedcc-146">Ersetzen Sie den `viewDidLoad` vorhandenen durch den folgenden Code.</span><span class="sxs-lookup"><span data-stu-id="fedcc-146">Replace the existing `viewDidLoad` with the following code.</span></span>
+1. <span data-ttu-id="0968b-146">Ersetzen Sie das vorhandene `viewDidLoad` durch den folgenden Code.</span><span class="sxs-lookup"><span data-stu-id="0968b-146">Replace the existing `viewDidLoad` with the following code.</span></span>
 
     :::code language="objc" source="../demo/GraphTutorial/GraphTutorial/WelcomeViewController.m" id="ViewDidLoadSnippet":::
 
-<span data-ttu-id="fedcc-147">Wenn Sie Ihre Änderungen speichern und die APP jetzt neu starten, wird die Benutzeroberfläche nach der Anmeldung mit dem Anzeigenamen und der e-Mail-Adresse des Benutzers aktualisiert.</span><span class="sxs-lookup"><span data-stu-id="fedcc-147">If you save your changes and restart the app now, after sign-in the UI is updated with the user's display name and email address.</span></span>
+<span data-ttu-id="0968b-147">Wenn Sie Ihre Änderungen speichern und die App jetzt neu starten, wird die Benutzeroberfläche nach der Anmeldung mit dem Anzeigenamen und der E-Mail-Adresse des Benutzers aktualisiert.</span><span class="sxs-lookup"><span data-stu-id="0968b-147">If you save your changes and restart the app now, after sign-in the UI is updated with the user's display name and email address.</span></span>
